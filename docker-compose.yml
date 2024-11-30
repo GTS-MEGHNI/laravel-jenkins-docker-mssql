@@ -1,0 +1,73 @@
+services:
+    laravel:
+        restart: unless-stopped
+        container_name: app
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        volumes:
+            - laravel_storage:/var/www/html/storage
+        ports:
+            - "8800:80"
+        networks:
+            - n-laravel
+        depends_on:
+            - mssql
+        command: sh -c "nginx -g 'daemon off;' & php-fpm"
+
+    mssql:
+        container_name: mssql-db
+        hostname: mssql-db
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        user: root
+        restart: always
+        environment:
+            ACCEPT_EULA: "Y"
+            MSSQL_SA_PASSWORD: ${DB_PASSWORD}
+            MSSQL_PID: "Express"
+            MSSQL_TCP_PORT: 1433
+        ports:
+            - "1455:1433"
+        networks:
+            - n-laravel
+        volumes:
+            - sql_data:/var/opt/mssql/data
+            - sql_log:/var/opt/mssql/log
+            - sql_secrets_volume:/var/opt/mssql/secrets
+    cron:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        container_name: cron
+        volumes:
+            - laravel_storage:/var/www/html/storage
+        networks:
+            - n-laravel
+        depends_on:
+            - mssql
+        entrypoint: [ "/bin/sh", "cron.entrypoint.sh" ]
+
+    supervisor:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        container_name: supervisor
+        volumes:
+            - laravel_storage:/var/www/html/storage
+        networks:
+            - n-laravel
+        depends_on:
+            - mssql
+        entrypoint: [ "/bin/sh", "supervisor.entrypoint.sh" ]
+
+volumes:
+    laravel_storage:
+    sql_data:
+    sql_log:
+    sql_secrets_volume:
+
+networks:
+    n-laravel:
+        driver: bridge

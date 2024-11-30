@@ -1,0 +1,36 @@
+# Node modules and Composer dependencies
+node_modules
+vendor
+
+
+# Laravel storage directories
+storage/app
+storage/*.key
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+bootstrap/cache/*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE and editor config files
+.idea
+.vscode
+.phpunit.cache
+.phpunit.result.cache
+.phpactor.json
+
+# Testing and temporary files
+/tests
+.phpunit.result.cache
+npm-debug.log
+yarn-error.log
+
+# Git and version control files
+.git
+.gitignore
+.gitattributes
