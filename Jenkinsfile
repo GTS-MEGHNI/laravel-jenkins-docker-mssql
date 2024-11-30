@@ -10,7 +10,7 @@ pipeline {
         stage('Pull from Git') {
             steps {
                 script {
-                    git url: 'git@github.com:sadeeminformatique/sarpi_web.git',
+                    git url: 'git@github.com:GTS-MEGHNI/laravel-jenkins-docker-mssql.git',
                         branch: 'main',
                         credentialsId: 'qhse-api-git-key'
                 }
